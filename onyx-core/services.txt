@@ -1,0 +1,1 @@
+echo.ony exit_node/services/echo.ony/public.pem
