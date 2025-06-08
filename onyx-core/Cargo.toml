@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "shared",
+    "entry_node",
+    "middle_node",
+    "exit_node",
+    "client",
+    "browser",
+    "server"
+]
+resolver = "2"
