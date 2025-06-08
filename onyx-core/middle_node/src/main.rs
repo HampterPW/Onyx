@@ -1,13 +1,15 @@
 use shared::crypto::{load_or_generate_keys, decrypt_layer};
 use shared::packet::HopData;
+use shared::config::load_node_config;
 use tokio::{net::{TcpListener, TcpStream}, io::{AsyncWriteExt, AsyncBufReadExt, BufReader}};
 use base64::{engine::general_purpose, Engine as _};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    let config = load_node_config("middle_node/config.toml");
     let (priv_key, _pub_key) = load_or_generate_keys("middle_node/keys");
-    let listener = TcpListener::bind("127.0.0.1:7001").await?;
-    println!("Middle node listening on 7001");
+    let listener = TcpListener::bind(&config.listen).await?;
+    println!("Middle node listening on {}", config.listen);
     loop {
         let (mut socket, _) = listener.accept().await?;
         let priv_key = priv_key.clone();

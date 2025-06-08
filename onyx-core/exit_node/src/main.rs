@@ -4,12 +4,14 @@ use tokio::{net::{TcpListener, TcpStream}, io::{AsyncWriteExt, AsyncBufReadExt, 
 use base64::{engine::general_purpose, Engine as _};
 use shared::crypto::{rsa_private_from_pem, rsa_public_to_pem, rsa_private_to_pem, rsa_public_from_pem, encrypt_layer, decrypt_layer as decrypt};
 use std::path::Path;
+use shared::config::load_node_config;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    let config = load_node_config("exit_node/config.toml");
     let (priv_key, _pub_key) = load_or_generate_keys("exit_node/keys");
-    let listener = TcpListener::bind("127.0.0.1:7002").await?;
-    println!("Exit node listening on 7002");
+    let listener = TcpListener::bind(&config.listen).await?;
+    println!("Exit node listening on {}", config.listen);
     loop {
         let (mut socket, _) = listener.accept().await?;
         let priv_key = priv_key.clone();
